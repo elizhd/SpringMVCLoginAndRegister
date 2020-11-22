@@ -7,6 +7,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="SpringMVCLogin&amp;Register" />
+        <module name="SpringMVCLoginAndRegister" />
+        <module name="SpringAuthority" />
       </profile>
     </annotationProcessing>
   </component>

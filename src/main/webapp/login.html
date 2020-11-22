@@ -11,6 +11,12 @@
     <script type="text/javascript" src="web_resources/bootstrap/js/jquery-3.4.0.min.js"></script>
     <script type="text/javascript" src="web_resources/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="web_resources/bootstrap/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="web_resources/tools/jsencrypt.min.js"></script>
+
+
+<!--    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>-->
+
+
 
     <style>
         .box {
@@ -114,8 +120,8 @@
         $('#loginResult').addClass('alert-success');
         $('#userName').attr("disabled", true);
         $('#userPassword').attr("disabled", true);
-        $('#loginResult').html(sessionStorage.getItem("userName") + '，您已登录！');
-        setTimeout(window.location.href = 'management.html', 100000);
+        $('#loginResult').html('您已登录！');
+        setTimeout(window.location.href = 'login.html', 100000);
     }
 
 
@@ -160,21 +166,49 @@
                 $.cookie("userPassword", "", {expires: -1});
             }
 
+            var sKey = "";
+            // 获取RSA公钥
+            $.ajax({
+                type: "get",
+                url: getPath() + "/getSKey",
+                async: false,
+                dataType: "text",
+                success: function (data) {
+                    if(data){
+                        sKey =  data;
+                        console.log("获取公钥成功: " + data);
+                    }
+                },
+                error: function () {
+                    console.log("获取公钥失败");
+                }
+            })
+
+            var encrypt = new JSEncrypt();
+            encrypt.setPublicKey(sKey);
+            // 加密
+            userName = encrypt.encrypt(userName);
+            userPassword = encrypt.encrypt(userPassword);
+            console.log("RSA Encrypted Username：" + userName);
+            console.log("RSA Encrypted Password：" + userPassword);
+
+
             if (flag) {
                 $.ajax({
                     type: "post",
                     url: getPath() + "/loginUser",
                     async: false,
                     dataType: "json",
-                    data: $('form').serialize(),
+                    data:  {"userName":userName, "userPassword":userPassword},
                     success: function (data) {
                         if (data.flag) {
                             $('#userName').addClass('is-valid');
                             $('#userPassword').addClass('is-valid');
                             $('#loginResult').addClass('alert-success');
                             $('#loginResult').html('登录成功！');
+                            setTimeout(window.location.href = './html/page_for_manager.html', 5000);
+                            sessionStorage.setItem("userName", userName);
 
-                            sessionStorage.setItem("userName", userName)
                         } else {
                             $('#userPassword').addClass('is-invalid');
                         }

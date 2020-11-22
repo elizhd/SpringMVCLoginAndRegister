@@ -19,7 +19,15 @@
 
     <context:component-scan base-package="edu.usts.eie.controller"/>
 
-
+    <!-- 定义Spring MVC的拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 拦截所有请求 -->
+            <mvc:mapping path="/**"/>
+            <!-- 自定义判断用户权限的拦截类  -->
+            <bean class="edu.usts.eie.tools.AuthorityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql://localhost:3306/test?useSSL=false"/>

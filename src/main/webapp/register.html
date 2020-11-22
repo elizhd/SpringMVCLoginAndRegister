@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="web_resources/bootstrap/css/bootstrap.min.css">
     <script type="text/javascript" src="web_resources/bootstrap/js/jquery-3.4.0.min.js"></script>
     <script type="text/javascript" src="web_resources/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="web_resources/tools/jsencrypt.min.js"></script>
 
     <style>
         .box {
@@ -116,6 +117,33 @@
     $('#userName').blur(function(){
         var userName = $('#userName').val();
         if( userName!= ''){
+            var sKey = "";
+            var sKey = "";
+            // 获取RSA公钥
+            $.ajax({
+                type: "get",
+                url: getPath() + "/getSKey",
+                async: false,
+                dataType: "text",
+                success: function (data) {
+                    if(data){
+                        sKey =  data;
+                        console.log("获取公钥成功: " + data);
+
+                    }
+
+                },
+                error: function () {
+                    console.log("获取公钥失败");
+                }
+            })
+
+            var encrypt = new JSEncrypt();
+            encrypt.setPublicKey(sKey);
+            // 加密
+            userName = encrypt.encrypt(userName);
+            console.log("RSA Decrypted Username：" + userName);
+
             $.ajax({
                 type: "post",
                 url: getPath() + "/isRegistered",
@@ -214,6 +242,35 @@
 
         if (flag && nameCheck && flag2) {
             // console.log($('form').serialize());
+            // 获取RSA公钥
+            var sKey = "";
+            // 获取RSA公钥
+            $.ajax({
+                type: "get",
+                url: getPath() + "/getSKey",
+                async: false,
+                dataType: "text",
+                success: function (data) {
+                    if(data){
+                        sKey =  data;
+                        console.log("获取公钥成功: " + data);
+
+                    }
+
+                },
+                error: function () {
+                    console.log("获取公钥失败");
+                }
+            })
+
+            var encrypt = new JSEncrypt();
+            encrypt.setPublicKey(sKey);
+            // 加密
+            userName = encrypt.encrypt(userName);
+            userPassword = encrypt.encrypt(userPassword);
+            console.log("RSA Encrypted Username：" + userName);
+            console.log("RSA Encrypted Password：" + userPassword);
+
             $.ajax({
                 type: "post",
                 url: getPath() + "/registerUser",

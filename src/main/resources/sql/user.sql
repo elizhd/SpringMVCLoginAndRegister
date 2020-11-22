@@ -8,9 +8,6 @@ CREATE TABLE if not exists `user`
     PRIMARY KEY (`id`)
 );
 
-insert into user(name, password, email, role) values('admin','admin','admin',true);
-insert into user(name, password, email, role) values('test','test','test',false);
-insert into user(name, password, email, role) values('test2','test2','test2',false);
-insert into user(name, password, email, role) values('test3','test3','test3',false);
+
 
 
